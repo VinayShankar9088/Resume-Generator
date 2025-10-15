@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Resume Builder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gradient-to-r from-indigo-100 via-white to-cyan-100 min-h-screen font-sans">
+  <div class="max-w-7xl mx-auto py-12 px-6 grid md:grid-cols-2 gap-10">
+    
+    <!-- 📝 Resume Form -->
+    <form id="resume-form" action="{{ url_for('generate') }}" method="post" enctype="multipart/form-data"
+      class="bg-white p-8 rounded-3xl shadow-xl space-y-6 border border-indigo-100">
+      
+      <h1 class="text-3xl font-extrabold text-indigo-600 mb-4">Resume Builder</h1>
+
+      <input class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-400" name="name" id="name" placeholder="Full Name" required>
+      <input class="w-full border border-gray-300 rounded-lg p-3" name="email" id="email" placeholder="Email">
+      <input class="w-full border border-gray-300 rounded-lg p-3" name="phone" id="phone" placeholder="Phone">
+
+      <textarea class="w-full border border-gray-300 rounded-lg p-3" name="summary" id="summary" rows="3" placeholder="Summary"></textarea>
+      <textarea class="w-full border border-gray-300 rounded-lg p-3" name="skills" id="skills" rows="3" placeholder="Skills (one per line)"></textarea>
+      <textarea class="w-full border border-gray-300 rounded-lg p-3" name="education" id="education" rows="3" placeholder="Education (one per line)"></textarea>
+      <textarea class="w-full border border-gray-300 rounded-lg p-3" name="projects" id="projects" rows="3" placeholder="Projects (one per line)"></textarea>
+      <textarea class="w-full border border-gray-300 rounded-lg p-3" name="experience" id="experience" rows="3" placeholder="Experience (one per line)"></textarea>
+      <textarea class="w-full border border-gray-300 rounded-lg p-3" name="certificates" id="certificates" rows="3" placeholder="Certificates (one per line)"></textarea>
+
+      <div>
+        <label class="block text-gray-700 font-medium mb-1">Profile Photo</label>
+        <input type="file" name="photo" id="photo" accept="image/*" class="w-full border border-gray-300 rounded-lg p-2">
+      </div>
+
+      <div>
+        <label class="block text-gray-700 font-medium mb-1">Select Template</label>
+        <select name="template" id="template"
+          class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+          <option value="template1">Elegant</option>
+          <option value="template2">Modern</option>
+          <option value="template3">Classic</option>
+        </select>
+      </div>
+
+      <div class="flex justify-end pt-4">
+        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg shadow-md transition">Generate Resume</button>
+      </div>
+    </form>
+
+    <!-- 👀 Live Preview -->
+    <div id="preview" class="bg-white p-8 rounded-3xl shadow-xl border border-cyan-100">
+      <h2 class="text-2xl font-bold text-cyan-600 mb-6">Live Preview</h2>
+      <div id="preview-area" class="text-gray-800 space-y-6"></div>
+    </div>
+  </div>
+
+  <!-- 💡 JavaScript for Live Preview -->
+  <script>
+    const form = document.getElementById('resume-form');
+    const previewArea = document.getElementById('preview-area');
+    const photoInput = document.getElementById('photo');
+
+    function formatList(text) {
+      return text
+        .split('\n')
+        .map(item => item.trim())
+        .filter(Boolean)
+        .map(item => `<li class="ml-6 list-disc">${item}</li>`)
+        .join('');
+    }
+
+    function updatePreview() {
+      const data = new FormData(form);
+      const obj = Object.fromEntries(data.entries());
+
+      let html = `<div class="space-y-4">`;
+
+      // 🖼 Profile Photo
+      if (photoInput.files && photoInput.files[0]) {
+        const url = URL.createObjectURL(photoInput.files[0]);
+        html += `<div class="flex items-center gap-4"><img src="${url}" class="w-24 h-24 rounded-full object-cover border-4 border-cyan-400 shadow-md"><div>`;
+      }
+
+      // 🧑 Name + Contact
+      html += `<h1 class="text-3xl font-bold text-indigo-700">${obj.name || 'Your Name'}</h1>`;
+      html += `<p class="text-gray-600">${obj.email || ''}${obj.phone ? ' • ' + obj.phone : ''}</p>`;
+      if (photoInput.files && photoInput.files[0]) html += `</div></div>`;
+
+      // 📌 Sections
+      if (obj.summary)
+        html += `<section><h3 class="text-lg font-semibold text-cyan-600">Summary</h3><p>${obj.summary}</p></section>`;
+      if (obj.skills)
+        html += `<section><h3 class="text-lg font-semibold text-cyan-600">Skills</h3><ul>${formatList(obj.skills)}</ul></section>`;
+      if (obj.education)
+        html += `<section><h3 class="text-lg font-semibold text-cyan-600">Education</h3><ul>${formatList(obj.education)}</ul></section>`;
+      if (obj.projects)
+        html += `<section><h3 class="text-lg font-semibold text-cyan-600">Projects</h3><ul>${formatList(obj.projects)}</ul></section>`;
+      if (obj.experience)
+        html += `<section><h3 class="text-lg font-semibold text-cyan-600">Experience</h3><ul>${formatList(obj.experience)}</ul></section>`;
+      if (obj.certificates)
+        html += `<section><h3 class="text-lg font-semibold text-cyan-600">Certificates</h3><ul>${formatList(obj.certificates)}</ul></section>`;
+
+      html += `</div>`;
+      previewArea.innerHTML = html;
+    }
+
+    form.addEventListener('input', updatePreview);
+    photoInput.addEventListener('change', updatePreview);
+  </script>
+</body>
+</html>
