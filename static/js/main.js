@@ -76,3 +76,4 @@ document.getElementById('resume-form').addEventListener('input', () => {
 document.getElementById('toggle-required').addEventListener('change', (e) => {
     toggleRequiredFields(e.target.checked);
 });
+window.addEventListener('DOMContentLoaded', updatePreview);

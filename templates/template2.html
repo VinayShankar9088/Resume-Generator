@@ -1,83 +1,228 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Resume - Modern</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>{{ name }} - Resume</title>
+
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f3f4f6;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    /* ---------- HEADER ---------- */
+    .header {
+      background: #4f46e5;
+      color: white;
+      padding: 24px;
+    }
+
+    .photo {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid white;
+      float: left;
+      margin-right: 20px;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      margin: 0;
+    }
+
+    .header p {
+      font-size: 14px;
+      margin-top: 6px;
+      color: #e5e7eb;
+    }
+
+    .clear {
+      clear: both;
+    }
+
+    /* ---------- CONTENT ---------- */
+    .content {
+      padding: 32px;
+      overflow: hidden; /* important for auto divider */
+    }
+
+    .left,
+    .right {
+      width: 48%;
+      float: left;
+      box-sizing: border-box;
+    }
+
+    .left {
+      padding-right: 24px;
+    }
+
+    .right {
+      padding-left: 24px;
+    }
+
+    /* AUTO HEIGHT DIVIDER */
+    .divider {
+      width: 1px;
+      background: #e5e7eb;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+    }
+
+    .content-wrapper {
+      position: relative;
+      overflow: hidden;
+    }
+
+    section {
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      font-size: 18px;
+      color: #4f46e5;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #e0e7ff;
+      padding-bottom: 4px;
+    }
+
+    ul {
+      padding-left: 20px;
+      margin: 0;
+    }
+
+    li {
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: #374151;
+    }
+
+    p {
+      font-size: 14px;
+      color: #374151;
+    }
+
+    /* ---------- PRINT / PDF ---------- */
+    @media print {
+      body {
+        background: white;
+      }
+
+      .container {
+        margin: 0;
+        border-radius: 0;
+      }
+
+      section {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
 </head>
-<body class="bg-gray-100 font-sans leading-relaxed">
-  <div class="max-w-5xl mx-auto my-10 bg-white shadow-xl rounded-xl overflow-hidden">
-    
-    <!-- Header -->
-    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-6 flex items-center space-x-6">
+
+<body>
+  <div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
       {% if photo %}
-        <img src="{{ url_for('static', filename=photo) }}" class="w-24 h-24 rounded-full border-4 border-white shadow-md object-cover">
+        <img src="{{ photo }}" class="photo" alt="Profile Photo">
       {% endif %}
-      <div>
-        <h1 class="text-3xl font-bold">{{ name }}</h1>
-        <p class="text-gray-100">{{ email }} • {{ phone }}</p>
-      </div>
+      <h1>{{ name }}</h1>
+      <p>{{ email }}{% if phone %} • {{ phone }}{% endif %}</p>
+      <div class="clear"></div>
     </div>
 
-    <!-- Content -->
-    <div class="grid grid-cols-3 gap-6 p-8">
-      
-      <!-- Left Column -->
-      <div class="col-span-1 space-y-6 border-r border-gray-200 pr-6">
-        {% if summary %}
-        <section>
-          <h2 class="text-lg font-semibold text-indigo-600 border-b pb-1 mb-2">Summary</h2>
-          <p class="text-gray-700 text-sm">{{ summary }}</p>
-        </section>
-        {% endif %}
+    <!-- CONTENT -->
+    <div class="content">
+      <div class="content-wrapper">
 
-        {% if skills %}
-        <section>
-          <h2 class="text-lg font-semibold text-indigo-600 border-b pb-1 mb-2">Skills</h2>
-          <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
-            {% for s in skills %}<li>{{ s }}</li>{% endfor %}
-          </ul>
-        </section>
-        {% endif %}
-      </div>
+        <div class="divider"></div>
 
-      <!-- Right Column -->
-      <div class="col-span-2 space-y-6">
-        {% if educations %}
-        <section>
-          <h2 class="text-lg font-semibold text-indigo-600 border-b pb-1 mb-2">Education</h2>
-          <ul class="list-disc list-inside space-y-1 text-gray-700">
-            {% for e in educations %}<li>{{ e }}</li>{% endfor %}
-          </ul>
-        </section>
-        {% endif %}
+        <!-- LEFT COLUMN -->
+        <div class="left">
+          {% if summary %}
+          <section>
+            <h2>Summary</h2>
+            <p>{{ summary }}</p>
+          </section>
+          {% endif %}
 
-        {% if projects %}
-        <section>
-          <h2 class="text-lg font-semibold text-indigo-600 border-b pb-1 mb-2">Projects</h2>
-          <ul class="list-disc list-inside space-y-1 text-gray-700">
-            {% for p in projects %}<li>{{ p }}</li>{% endfor %}
-          </ul>
-        </section>
-        {% endif %}
+          {% if skills %}
+          <section>
+            <h2>Skills</h2>
+            <ul>
+              {% for s in skills %}
+              <li>{{ s }}</li>
+              {% endfor %}
+            </ul>
+          </section>
+          {% endif %}
+        </div>
 
-        {% if experiences %}
-        <section>
-          <h2 class="text-lg font-semibold text-indigo-600 border-b pb-1 mb-2">Experience</h2>
-          <ul class="list-disc list-inside space-y-1 text-gray-700">
-            {% for ex in experiences %}<li>{{ ex }}</li>{% endfor %}
-          </ul>
-        </section>
-        {% endif %}
+        <!-- RIGHT COLUMN -->
+        <div class="right">
+          {% if educations %}
+          <section>
+            <h2>Education</h2>
+            <ul>
+              {% for e in educations %}
+              <li>{{ e }}</li>
+              {% endfor %}
+            </ul>
+          </section>
+          {% endif %}
 
-        {% if certificates %}
-        <section>
-          <h2 class="text-lg font-semibold text-indigo-600 border-b pb-1 mb-2">Certificates</h2>
-          <ul class="list-disc list-inside space-y-1 text-gray-700">
-            {% for c in certificates %}<li>{{ c }}</li>{% endfor %}
-          </ul>
-        </section>
-        {% endif %}
+          {% if projects %}
+          <section>
+            <h2>Projects</h2>
+            <ul>
+              {% for p in projects %}
+              <li>{{ p }}</li>
+              {% endfor %}
+            </ul>
+          </section>
+          {% endif %}
+
+          {% if experiences %}
+          <section>
+            <h2>Experience</h2>
+            <ul>
+              {% for ex in experiences %}
+              <li>{{ ex }}</li>
+              {% endfor %}
+            </ul>
+          </section>
+          {% endif %}
+
+          {% if certificates %}
+          <section>
+            <h2>Certificates</h2>
+            <ul>
+              {% for c in certificates %}
+              <li>{{ c }}</li>
+              {% endfor %}
+            </ul>
+          </section>
+          {% endif %}
+        </div>
+
+        <div class="clear"></div>
       </div>
     </div>
 
