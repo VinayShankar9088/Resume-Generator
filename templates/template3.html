@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>{{ name }} - Resume</title>
+
     <style>
         body {
             font-family: "Times New Roman", Times, serif;
@@ -11,6 +12,25 @@
             background-color: #fff;
             margin: 0;
             padding: 0;
+        }
+
+        /* 🔘 PRINT BUTTON (ADDED ONLY) */
+        .print-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 18px;
+            font-size: 14px;
+            background: #3d08c5;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        .print-btn:hover {
+            opacity: 0.85;
         }
 
         .container {
@@ -68,9 +88,23 @@
             margin: 0 auto 10px auto;
             display: block;
         }
+
+        /* ❌ HIDE BUTTON IN PDF */
+        @media print {
+            .print-btn {
+                display: none;
+            }
+        }
     </style>
 </head>
+
 <body>
+
+    <!-- 🔘 PRINT BUTTON (ADDED ONLY) -->
+    <button class="print-btn" onclick="window.print()">
+        🖨 Print / Save as PDF
+    </button>
+
     <div class="container">
         {% if photo %}
         <img src="{{ photo }}" alt="Profile Photo" class="photo">
@@ -78,7 +112,7 @@
 
         <h1>{{ name }}</h1>
         <p class="contact">Email: {{ email }}{% if phone %} | Phone: {{ phone }}{% endif %}</p>
-        
+
         {% if summary %}
         <div class="section summary">
             <h2>Professional Summary</h2>
@@ -141,5 +175,6 @@
         </div>
         {% endif %}
     </div>
+
 </body>
 </html>
