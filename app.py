@@ -33,8 +33,14 @@ def get_form_data():
     }
 
 # -------------------- Routes --------------------
+# ✅ Welcome Page
 @app.route('/')
-def index():
+def welcome():
+    return render_template('welcome.html')
+
+# ✅ Resume Builder Page (tumhara existing index.html)
+@app.route('/builder')
+def builder():
     return render_template('index.html')
 
 @app.route('/generate', methods=['POST'])
@@ -44,7 +50,7 @@ def generate():
 
     if not data["name"]:
         flash("Name is required.")
-        return redirect(url_for("index"))
+        return redirect(url_for("builder"))
 
     # Photo upload
     photo_filename = None
