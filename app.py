@@ -1,3 +1,4 @@
+from flask import send_from_directory
 from flask import Flask, render_template, request, redirect, url_for, flash, make_response
 from werkzeug.utils import secure_filename
 import pdfkit
@@ -37,6 +38,15 @@ def get_form_data():
 @app.route('/')
 def welcome():
     return render_template('welcome.html')
+# ✅ Favicon Route (VERY IMPORTANT)
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(
+        os.path.join(app.root_path, 'static'),
+        'favicon.ico',
+        mimetype='image/vnd.microsoft.icon'
+    )
+
 
 # ✅ Resume Builder Page (tumhara existing index.html)
 @app.route('/builder')
