@@ -1,0 +1,129 @@
+from flask import send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, flash, make_response
+from werkzeug.utils import secure_filename
+import pdfkit
+import os
+from pathlib import Path
+
+# -------------------- Setup --------------------
+BASE_DIR = Path(__file__).resolve().parent
+UPLOAD_FOLDER = BASE_DIR / 'static' / 'uploads'
+UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
+ALLOWED_EXT = {'png', 'jpg', 'jpeg', 'gif'}
+
+app = Flask(__name__)
+app.secret_key = 'change-me-to-a-secure-key'
+app.config['UPLOAD_FOLDER'] = str(UPLOAD_FOLDER)
+app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2MB
+
+# -------------------- Helper --------------------
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXT
+
+def get_form_data():
+    return {
+        "name": request.form.get("name", "").strip(),
+        "email": request.form.get("email", "").strip(),
+        "phone": request.form.get("phone", "").strip(),
+        "summary": request.form.get("summary", "").strip(),
+        "skills": [s.strip() for s in request.form.get("skills", "").split("\n") if s.strip()],
+        "educations": [e.strip() for e in request.form.get("education", "").split("\n") if e.strip()],
+        "projects": [p.strip() for p in request.form.get("projects", "").split("\n") if p.strip()],
+        "experiences": [ex.strip() for ex in request.form.get("experience", "").split("\n") if ex.strip()],
+        "certificates": [c.strip() for c in request.form.get("certificates", "").split("\n") if c.strip()],
+    }
+
+# -------------------- Routes --------------------
+# ✅ Welcome Page
+@app.route('/')
+def welcome():
+    return render_template('welcome.html')
+# ✅ Favicon Route (VERY IMPORTANT)
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(
+        os.path.join(app.root_path, 'static'),
+        'favicon.ico',
+        mimetype='image/vnd.microsoft.icon'
+    )
+
+
+# ✅ Resume Builder Page (tumhara existing index.html)
+@app.route('/builder')
+def builder():
+    return render_template('index.html')
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+
+@app.route('/generate', methods=['POST'])
+def generate():
+    data = get_form_data()
+    template_choice = request.form.get('template', 'template1')
+
+    if not data["name"]:
+        flash("Name is required.")
+        return redirect(url_for("builder"))
+
+    # Photo upload
+    photo_filename = None
+    if 'photo' in request.files:
+        photo = request.files['photo']
+        if photo and photo.filename != '' and allowed_file(photo.filename):
+            filename = secure_filename(photo.filename)
+            save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            photo.save(save_path)
+            # store relative path for browser rendering
+            photo_filename = os.path.join('static', 'uploads', filename)
+
+    data["photo"] = photo_filename
+    data["template_choice"] = template_choice
+
+    # PDF download option
+    if request.form.get("download") == "pdf":
+        pdf_data = data.copy()
+        if pdf_data["photo"]:
+            # absolute path for wkhtmltopdf
+            photo_path = os.path.join(BASE_DIR, pdf_data["photo"])
+            file_url = photo_path.replace("\\", "/")
+            pdf_data["photo"] = f"file:///{file_url}"
+
+        html = render_template(f"{template_choice}.html", **pdf_data)
+
+        # Save HTML for debugging
+        with open("debug.html", "w", encoding="utf-8") as f:
+            f.write(html)
+
+        # PDFKit configuration
+        config = pdfkit.configuration(wkhtmltopdf=r'C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe')
+        options = {
+            'enable-local-file-access': '',   # must be empty string, not None
+            'page-size': 'A4',
+            'encoding': 'UTF-8',
+            'quiet': ''
+        }
+
+        try:
+            output_path = os.path.join(BASE_DIR, "resume.pdf")
+            pdfkit.from_string(html, output_path, configuration=config, options=options)
+
+            # Serve the file as download
+            with open(output_path, "rb") as f:
+                pdf_data = f.read()
+
+            response = make_response(pdf_data)
+            response.headers['Content-Type'] = 'application/pdf'
+            response.headers['Content-Disposition'] = 'attachment; filename=resume.pdf'
+            return response
+
+        except Exception as e:
+            flash(f"PDF generation failed: {e}")
+            return redirect(url_for("index"))
+
+    return render_template(f"{template_choice}.html", **data)
+
+# -------------------- Run App --------------------
+if __name__ == "__main__":
+    app.run(debug=True)

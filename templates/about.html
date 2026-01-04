@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us | Resume Generator</title>
+  <meta name="description"
+    content="Learn about the Resume Generator project. Our mission, offerings, and purpose for creating a professional resume builder.">
+  <!-- Favicon -->
+  <link rel="icon" href="/static/favicon.ico">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gradient-to-r from-indigo-100 via-white to-cyan-100 min-h-screen font-sans">
+
+  <!-- NAVBAR -->
+  <header class="bg-indigo-600 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 class="text-xl font-bold">Resume Generator</h1>
+      <nav class="space-x-5">
+        <a href="{{ url_for('welcome') }}" class="hover:text-indigo-200">Home</a>
+        <a href="{{ url_for('builder') }}" class="hover:text-indigo-200">Build Resume</a>
+        <a href="{{ url_for('about') }}" class="font-semibold underline">About Us</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="bg-gradient-to-r from-indigo-500 to-cyan-500 text-white text-center py-16 px-6 rounded-b-3xl">
+    <h2 class="text-4xl font-extrabold mb-3">About Resume Generator</h2>
+    <p class="max-w-2xl mx-auto text-lg opacity-95">
+      Simple • Professional • Easy to Use
+    </p>
+  </section>
+
+  <!-- CONTENT -->
+  <div class="max-w-5xl mx-auto py-12 px-6 space-y-10">
+
+    <!-- Mission -->
+    <div class="bg-white p-8 rounded-3xl shadow-xl border border-indigo-100">
+      <h3 class="text-2xl font-bold text-indigo-600 mb-4">Our Mission</h3>
+      <p class="text-gray-700 leading-relaxed">
+        Our mission is to make resume building simple, stress-free, and accessible for everyone.
+        This platform helps users create professional resumes without any complicated processes.
+      </p>
+    </div>
+
+    <!-- Platform Offers -->
+    <div class="bg-white p-8 rounded-3xl shadow-xl border border-indigo-100">
+      <h3 class="text-2xl font-bold text-indigo-600 mb-4">What This Platform Offers</h3>
+      <p class="text-gray-700 leading-relaxed mb-4">
+        This tool is specifically designed for students, freshers, and beginners who want to create
+        fast and reliable resumes.
+      </p>
+      <ul class="list-disc list-inside text-gray-700 space-y-2">
+        <li>Easy and clean resume builder</li>
+        <li>Job-ready resume formats</li>
+        <li>Instant resume generation</li>
+        <li>No login required</li>
+        <li>Free to use</li>
+      </ul>
+    </div>
+
+    <!-- Why This Project Exists -->
+    <div class="bg-white p-8 rounded-3xl shadow-xl border border-indigo-100">
+      <h3 class="text-2xl font-bold text-indigo-600 mb-4">Why This Project Exists</h3>
+      <p class="text-gray-700 leading-relaxed">
+        Resume Generator was developed as a practical learning project focused on solving a real-world problem.
+        Its main goals are functionality, simplicity, and usability.
+      </p>
+    </div>
+
+    <!-- Highlight -->
+    <div class="bg-indigo-50 border-l-6 border-indigo-600 p-6 rounded-2xl text-gray-800 text-lg">
+      🚀 <strong>This project is created by an engineering student</strong> as a hands-on development initiative,
+      emphasizing real-world skills, clean design, and practical implementation.
+    </div>
+
+  </div>
+
+</body>
+</html>
