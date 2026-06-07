@@ -5,7 +5,7 @@ import pdfkit
 import os
 from pathlib import Path
 
-# -------------------- Setup --------------------
+
 BASE_DIR = Path(__file__).resolve().parent
 UPLOAD_FOLDER = BASE_DIR / 'static' / 'uploads'
 UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
@@ -16,7 +16,7 @@ app.secret_key = 'change-me-to-a-secure-key'
 app.config['UPLOAD_FOLDER'] = str(UPLOAD_FOLDER)
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2MB
 
-# -------------------- Helper --------------------
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXT
 
@@ -33,12 +33,11 @@ def get_form_data():
         "certificates": [c.strip() for c in request.form.get("certificates", "").split("\n") if c.strip()],
     }
 
-# -------------------- Routes --------------------
-# ✅ Welcome Page
+
 @app.route('/')
 def welcome():
     return render_template('welcome.html')
-# ✅ Favicon Route (VERY IMPORTANT)
+
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(
@@ -48,7 +47,6 @@ def favicon():
     )
 
 
-# ✅ Resume Builder Page (tumhara existing index.html)
 @app.route('/builder')
 def builder():
     return render_template('index.html')
@@ -124,6 +122,5 @@ def generate():
 
     return render_template(f"{template_choice}.html", **data)
 
-# -------------------- Run App --------------------
 if __name__ == "__main__":
     app.run(debug=True)
